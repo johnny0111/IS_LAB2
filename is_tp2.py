@@ -56,6 +56,13 @@ class DataCollection(threading.Thread):
 
     def run(self):
         # TODO LAB 1 - Get acceleration data values (x, y and z) from the simulation and print them to the console
+
+        x = get_data_from_simulation('accelX')
+        print(x)
+        y = get_data_from_simulation('accelY')
+        print(x)
+         z = get_data_from_simulation('accelZ')
+        print(x)
         # TODO LAB 2 - Push the data to the real-time database on Firebase
 
 # TODO LAB 1 - Implement the UpdateRate resource
