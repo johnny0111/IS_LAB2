@@ -56,17 +56,20 @@ class DataCollection(threading.Thread):
 
     def run(self):
         # TODO LAB 1 - Get acceleration data values (x, y and z) from the simulation and print them to the console
+        while True:
+            x = get_data_from_simulation('accelX')
+            print(x)
+            y = get_data_from_simulation('accelY')
+            print(y)
+            z = get_data_from_simulation('accelZ')
+            print(z)
+            time.sleep(1) #o sleep será igual ao time rate definido pelo utilizador
 
-        x = get_data_from_simulation('accelX')
-        print(x)
-        y = get_data_from_simulation('accelY')
-        print(x)
-         z = get_data_from_simulation('accelZ')
-        print(x)
         # TODO LAB 2 - Push the data to the real-time database on Firebase
 
 # TODO LAB 1 - Implement the UpdateRate resource
-# class UpdateRate(Resource):
+ #class UpdateRate(Resource):
+
 
 # TODO LAB 1 - Define the API resource routing
 #api.add_resource...
@@ -76,6 +79,10 @@ if __name__ == '__main__':
     clientID=sim.simxStart('127.0.0.1',19997,True,True,5000,5) # Connect to CoppeliaSim
     if clientID!=-1:
         # TODO LAB 1 - Start the data collection as a daemon thread
+        #data_c = threading.Thread(target=DataCollection.run(), name='Thread-collect', daemon=True)
+        collect = DataCollection()
+        collect.daemon = True
+        collect.start()
         app.run(debug=True, threaded=True)      
     else:
         exit()
