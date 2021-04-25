@@ -68,11 +68,15 @@ class DataCollection(threading.Thread):
         # TODO LAB 2 - Push the data to the real-time database on Firebase
 
 # TODO LAB 1 - Implement the UpdateRate resource
- #class UpdateRate(Resource):
+ class UpdateRate(Resource):
+     def get(self, rate):
+         return cache.get("current_rate")
+     def put(self, current_rate):
+         cache.set("current_rate", rate)
 
 
 # TODO LAB 1 - Define the API resource routing
-#api.add_resource...
+api.add_resource(UpdateRate, '/<float:rate>')
 
 if __name__ == '__main__':
     sim.simxFinish(-1) # just in case, close all opened connections
