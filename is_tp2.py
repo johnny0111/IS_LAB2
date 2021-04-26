@@ -63,7 +63,7 @@ class DataCollection(threading.Thread):
             print(y)
             z = get_data_from_simulation('accelZ')
             print(z)
-            time.sleep(1) #o sleep será igual ao time rate definido pelo utilizador
+            time.sleep(cache.get('current_rate')) #o sleep será igual ao time rate definido pelo utilizador
 
         # TODO LAB 2 - Push the data to the real-time database on Firebase
 
