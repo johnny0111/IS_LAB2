@@ -5,9 +5,13 @@ import sim
 import time 
 import threading
 import requests
+import json
+import re
 
 app = Flask(__name__)
 api = Api(app)
+
+
 
 # Instantiate the cache
 cache = Cache()
@@ -37,23 +41,37 @@ def get_data_from_simulation(id):
     return None
 
 # TODO LAB 2 - Implement the necessary functions to read and write data to your Firebase real-time database
+# Import database module.
+#from firebase_admin import db 
+# Get a database reference to our blog.
+
 def push_data(child, data):
+    db_ref = 'https://is2021-e5b25-default-rtdb.europe-west1.firebasedatabase.app/' + child + '.json'
+    requests.post(db_ref, json={'data': data, 'timestamp': time.time() })
     pass
 
-def put_config(child, data):
+def put_config(data):
+    db_ref = 'https://is2021-e5b25-default-rtdb.europe-west1.firebasedatabase.app/config.json'
+    requests.put(db_ref, json={'current_rate': data})
     pass
 
-def get_config(child):
+def get_config():
+    db_ref = 'https://is2021-e5b25-default-rtdb.europe-west1.firebasedatabase.app/config.json' 
+    rate = requests.get(db_ref)
+    value = re.findall("\d+\.\d+", rate.text)
+    
+    return float(value[0])
     pass
 
 # TODO LAB 1 - Implement the data collection loop in a thread
 class DataCollection(threading.Thread):
     def __init__(self):
+        value = 1.0
         threading.Thread.__init__(self)
         # initialize the current_rate value in the cache
-        cache.set("current_rate", 1.0)
+        cache.set("current_rate", value)
         # TODO LAB 2 - Put an initial rate in the config stored in the DB
-
+        put_config(value)
     def run(self):
         # TODO LAB 1 - Get acceleration data values (x, y and z) from the simulation and print them to the console
         while True:
@@ -63,9 +81,13 @@ class DataCollection(threading.Thread):
             print(y)
             z = get_data_from_simulation('accelZ')
             print(z)
-            time.sleep(cache.get('current_rate')) #o sleep será igual ao time rate definido pelo utilizador
-
+            time.sleep(get_config()) #o sleep será igual ao time rate definido pelo utilizador
+            push_data('accelX', x)
+            push_data('accelY', y)
+            push_data('accelZ', z)
+            print(get_config())
         # TODO LAB 2 - Push the data to the real-time database on Firebase
+      
 
 # TODO LAB 1 - Implement the UpdateRate resource
 class UpdateRate(Resource):
